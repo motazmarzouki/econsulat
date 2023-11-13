@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: econsulat-publicwebapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: econsulatrdvs
+      version: 'v1'
+  template:
+    metadata:
+      labels:
+        app: econsulatrdvs
+        version: 'v1'
+    spec:
+      hostAliases:
+        {{- if .Values.econsulatpublicwebapp.hostAliases }}
+        {{ toYaml .Values.econsulatpublicwebapp.hostAliases | nindent 8 }}
+        {{- end }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - econsulatrdvs
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      containers:
+        - name: econsulatrdvs-app
+          image: {{ .Values.econsulatpublicwebapp.image.repository }}:{{ .Values.econsulatpublicwebapp.image.tag }}
+          imagePullPolicy: {{ .Values.econsulatpublicwebapp.image.pullPolicy }}
+          env:
+            {{- range $key, $value := .Values.econsulatpublicwebapp.env }}
+            - name: {{ $key }}
+              value: {{ quote $value }}
+            {{- end }}
+          resources:
+            requests:
+              {{- toYaml .Values.econsulatpublicwebapp.resources.requests | nindent 14 }}
+            limits:
+              {{- toYaml .Values.econsulatpublicwebapp.resources.limits | nindent 14 }}
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            {{- toYaml .Values.econsulatpublicwebapp.readinessProbe | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.econsulatpublicwebapp.livenessProbe | nindent 12 }}
+

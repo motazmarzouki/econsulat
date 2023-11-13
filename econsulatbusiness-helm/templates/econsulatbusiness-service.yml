@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: econsulatbusiness
+  labels:
+    app: econsulatbusiness
+spec:
+  selector:
+    app: econsulatbusiness
+  type: NodePort
+  ports:
+    - name: {{ .Values.econsulatbusiness.ports.name }}
+      port: 80
+      targetPort: {{ .Values.econsulatbusiness.ports.containerPort }}
+

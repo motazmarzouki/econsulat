@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: econsulat-publicwebapp
+  labels:
+    app: econsulatrdvs-svc
+spec:
+  selector:
+    app: econsulatrdvs
+  type: NodePort
+  ports:
+    - name: {{ .Values.econsulatpublicwebapp.ports.name }}
+      port: 80
+      targetPort: {{ .Values.econsulatpublicwebapp.ports.containerPort }}
+

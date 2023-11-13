@@ -1,0 +1,22 @@
+name: econsulatbusiness
+version: 1.0.0
+appVersion: 1.0.0
+description: econsulatbusiness is a JHipster based monolith application
+icon: https://www.jhipster.tech/images/logo/logo-jhipster-drink-coffee.svg
+keywords:
+- spring
+- angular
+- react
+- JHipster
+- econsulatbusiness
+home: https://www.jhipster.tech/
+sources:
+- https://github.com/jhipster/generator-jhipster.git
+maintainers:
+- name: Team JHipster
+  email:
+dependencies:
+- name: postgresql
+  version: ^6.5.3
+  repository: https://charts.bitnami.com/bitnami
+  condition: postgresql.enabled

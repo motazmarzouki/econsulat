@@ -1,0 +1,29 @@
+{{- if .Values.econsulatbusiness.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: econsulatbusiness
+  annotations:
+    nginx.ingress.kubernetes.io/default-backend: econsulatbusiness
+
+spec:
+  rules:
+    - host: {{ .Values.econsulatbusiness.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: econsulatbusiness
+                port:
+                  number: {{ .Values.econsulatbusiness.ports.containerPort }}
+          - path: /rdv/
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: econsulat-publicwebapp
+                port:
+                  number: {{ .Values.econsulatpublicwebapp.ports.containerPort }}
+{{- end }}
+

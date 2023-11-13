@@ -1,0 +1,103 @@
+postgresql:
+
+  enabled: true
+  postgresqlUsername: econsulatbusiness
+  postgresqlDatabase: econsulatBusiness
+  postgresqlPassword: econsulatbusiness
+
+econsulatbusiness:
+
+  image:
+    repository: node15032-env-3424666.my.p4d.click:5000/econsulatbusiness-qa
+    tag: v1.6.14
+    pullPolicy: Always
+
+  env:
+    SPRING_PROFILES_ACTIVE: prod
+    SPRING_DATASOURCE_URL: 'jdbc:postgresql://econsulatbusiness-postgresql.qa.svc.cluster.local:5432/econsulatBusiness'
+    SPRING_DATASOURCE_USERNAME: 'econsulatbusiness'
+    SPRING_DATASOURCE_PASSWORD: 'econsulatbusiness'
+    MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: 'true'
+    JAVA_OPTS: ' -Xmx256m -Xms256m'
+    SERVER_SHUTDOWN: graceful
+    SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: 'http://iam-qa.econsulat/realms/jhipster'
+    SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: web_app
+    SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: pdoa7ObfRQHtgMhCwYk4tPPSB5a6diqM
+    #urlDomain: 'http://econsulat-qa.local/rdv'
+    keycloakDomain: 'http://iam-qa.econsulat'
+    client_id: web_app
+    client_secret: pdoa7ObfRQHtgMhCwYk4tPPSB5a6diqM
+    
+    #webappurl: 'http://econsulat-qa.local'
+    #publicwebappurl: 'http://par.econsulat.tn/rdv/appointment/schedule' 
+    #urlDomain: 'http://par.econsulat.tn/rdv'
+    
+    webappurl: 'http://econsulat-qa.local'
+    publicwebappurl: '/rdv/appointment/schedule'
+    urlDomain: '/rdv'
+    
+
+  ports:
+    name: http
+    containerPort: 8080
+
+  resources:
+    limits:
+      cpu: '1'
+      memory: '1Gi'
+    requests:
+      cpu: '500m'
+      memory: '512Mi'
+  readinessProbe:
+    httpGet:
+      path: /management/health/readiness
+      port: http
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    failureThreshold: 6
+
+  livenessProbe:
+    httpGet:
+      path: /management/health/liveness
+      port: http
+    initialDelaySeconds: 120
+
+  hostAliases:
+    - ip: 10.244.230.195
+      hostnames:
+        - iam-qa.econsulat
+
+  ingress:
+    enabled: true
+    hostname: econsulat-qa.local
+
+econsulatpublicwebapp:
+    image:
+      repository: node15032-env-3424666.my.p4d.click:5000/econsulatpublicwebapp-qa
+      tag: v1.6.14
+      pullPolicy: Always
+ 
+    ports:
+      name: http
+      containerPort: 80
+ 
+    resources:
+      limits:
+        cpu: '1'
+        memory: '1Gi'
+      requests:
+        cpu: '500m'
+        memory: '512Mi'
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 15
+      failureThreshold: 6
+ 
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 120
